@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.service.defaultFactory;
+import ru.yandex.practicum.filmorate.service.DefaultFactory;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -65,12 +65,12 @@ class FilmTest {
     public void validateDescription() {
         final Film film = new Film(correctFilm);
         //Добавляем описание
-        film.setDescription("!".repeat(defaultFactory.MAX_LENGTH_DESCRIPTION + 1));
+        film.setDescription("!".repeat(DefaultFactory.MAX_LENGTH_DESCRIPTION + 1));
 
         Set<ConstraintViolation<Film>> validates = validator.validate(film);
         assertTrue(validates.size() > 0);
 
-        assertEquals("размер должен находиться в диапазоне от 0 до " + defaultFactory.MAX_LENGTH_DESCRIPTION,
+        assertEquals("размер должен находиться в диапазоне от 0 до " + DefaultFactory.MAX_LENGTH_DESCRIPTION,
                               validates.iterator().next().getMessage(),
                       "Не корректно отработала валидация - размер описания фильма");
     }
@@ -84,7 +84,7 @@ class FilmTest {
         Set<ConstraintViolation<Film>> validates = validator.validate(film);
         assertTrue(validates.size() > 0);
 
-        assertEquals("дата релиза должна быть позже - " + defaultFactory.FIRST_DATE_RELEASE,
+        assertEquals("дата релиза должна быть позже - " + DefaultFactory.FIRST_DATE_RELEASE,
                 validates.iterator().next().getMessage(),
                 "Не корректно отработала валидация - дата релиза фильма");
     }

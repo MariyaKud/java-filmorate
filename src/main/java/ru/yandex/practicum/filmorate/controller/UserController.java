@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.exeption.InvalidIdException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repository.UserRepository;
-import ru.yandex.practicum.filmorate.service.defaultFactory;
+import ru.yandex.practicum.filmorate.service.DefaultFactory;
 
 import javax.validation.Valid;
 
@@ -23,7 +23,7 @@ import java.util.Collection;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserRepository userRepository = defaultFactory.getDefaultUserRepository();
+    private final UserRepository userRepository = DefaultFactory.getDefaultUserRepository();
 
     /**
      * Получить список пользователей

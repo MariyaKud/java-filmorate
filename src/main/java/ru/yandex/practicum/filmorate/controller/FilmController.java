@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.exeption.InvalidIdException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.repository.FilmRepository;
-import ru.yandex.practicum.filmorate.service.defaultFactory;
+import ru.yandex.practicum.filmorate.service.DefaultFactory;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -22,7 +22,7 @@ import java.util.Collection;
 @RequestMapping("/films")
 public class FilmController {
 
-    private final FilmRepository filmRepository = defaultFactory.getDefaultFilmRepository();
+    private final FilmRepository filmRepository = DefaultFactory.getDefaultFilmRepository();
 
     /**
      * Получить список фильмов

@@ -5,7 +5,7 @@ import javax.validation.ConstraintValidatorContext;
 
 import java.time.LocalDate;
 
-import ru.yandex.practicum.filmorate.service.defaultFactory;
+import ru.yandex.practicum.filmorate.service.DefaultFactory;
 
 public class ReleaseDateFilmValidator implements ConstraintValidator<ReleaseDateFilm, LocalDate> {
 
@@ -21,9 +21,9 @@ public class ReleaseDateFilmValidator implements ConstraintValidator<ReleaseDate
             // Отключаем подсказку по умолчанию
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate() +
-                            " - " + defaultFactory.FIRST_DATE_RELEASE)
+                            " - " + DefaultFactory.FIRST_DATE_RELEASE)
                             .addConstraintViolation();
-            return value.isAfter(defaultFactory.FIRST_DATE_RELEASE);
+            return value.isAfter(DefaultFactory.FIRST_DATE_RELEASE);
         }
         return true;
     }
