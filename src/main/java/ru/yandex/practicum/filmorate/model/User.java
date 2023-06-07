@@ -18,7 +18,7 @@ import java.time.LocalDate;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class User {
-    @Positive
+
     private int id;
     //логин не может быть пустым и содержать пробелы;
     @NonNull

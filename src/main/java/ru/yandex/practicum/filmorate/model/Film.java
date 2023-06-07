@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.validator.ReleaseDateFilm;
-import ru.yandex.practicum.filmorate.service.defaultFactory;
+import ru.yandex.practicum.filmorate.service.DefaultFactory;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,14 +18,14 @@ import java.time.LocalDate;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class Film {
-    @Positive
+
     private int id;
     //Название не может быть пустым
     @NonNull
     @NotBlank
     private String name;
     //Максимальная длина описания - MAX_LENGTH_DESCRIPTION символов
-    @Size(max = defaultFactory.MAX_LENGTH_DESCRIPTION)
+    @Size(max = DefaultFactory.MAX_LENGTH_DESCRIPTION)
     private String description;
     //дата релиза — не раньше 28 декабря 1895 года;
     @ReleaseDateFilm

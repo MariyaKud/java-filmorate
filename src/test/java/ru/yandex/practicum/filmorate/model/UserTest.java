@@ -19,14 +19,15 @@ class UserTest {
 
     // Инициализация Validator
     private static final Validator validator;
+
     static {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.usingContext().getValidator();
     }
 
     //пример корректно заполненного пользователя
-    private final static User correctUser = new User(1, "login", "User","User@mail.ru",
-                                                       LocalDate.of(2003,Month.APRIL,22));
+    private static final User correctUser = new User(1, "login", "User", "User@mail.ru",
+            LocalDate.of(2003, Month.APRIL, 22));
 
     @DisplayName("Пакет ошибок при создании сущности User c null полями")
     @Test
@@ -43,7 +44,7 @@ class UserTest {
         final User user = new User(correctUser);
 
         Set<ConstraintViolation<User>> validates = validator.validate(user);
-        assertEquals(validates.size(),0, "Пользователь должен был пройти валидацию");
+        assertEquals(validates.size(), 0, "Пользователь должен был пройти валидацию");
     }
 
     @DisplayName("Ошибка при пустом Email")
@@ -55,7 +56,7 @@ class UserTest {
         Set<ConstraintViolation<User>> validates = validator.validate(user);
 
         assertTrue(validates.size() > 0);
-        assertEquals("не должно быть пустым", validates.iterator().next().getMessage(),
+        assertEquals("email", validates.iterator().next().getPropertyPath().toString(),
                 "Не корректно отработала валидация - пустой Email");
     }
 
@@ -68,7 +69,8 @@ class UserTest {
         Set<ConstraintViolation<User>> validates = validator.validate(user);
 
         assertTrue(validates.size() > 0);
-        assertEquals("должно иметь формат адреса электронной почты", validates.iterator().next().getMessage(),
+        assertEquals("email",
+                      validates.iterator().next().getPropertyPath().toString(),
                 "Не корректно отработала валидация - Email");
     }
 
@@ -81,7 +83,8 @@ class UserTest {
         Set<ConstraintViolation<User>> validates = validator.validate(user);
 
         assertTrue(validates.size() > 0);
-        assertEquals("должно иметь формат адреса электронной почты", validates.iterator().next().getMessage(),
+        assertEquals("email",
+                      validates.iterator().next().getPropertyPath().toString(),
                 "Не корректно отработала валидация - Email");
     }
 
@@ -94,7 +97,7 @@ class UserTest {
         Set<ConstraintViolation<User>> validates = validator.validate(user);
 
         assertTrue(validates.size() > 0);
-        assertEquals("не должно быть пустым", validates.iterator().next().getMessage(),
+        assertEquals("login", validates.iterator().next().getPropertyPath().toString(),
                 "Не корректно отработала валидация - логина");
     }
 
@@ -107,7 +110,7 @@ class UserTest {
         Set<ConstraintViolation<User>> validates = validator.validate(user);
 
         assertTrue(validates.size() > 0);
-        assertEquals("пробелы использовать нельзя", validates.iterator().next().getMessage(),
+        assertEquals("login", validates.iterator().next().getPropertyPath().toString(),
                 "Не корректно отработала валидация - логина");
     }
 
@@ -131,7 +134,8 @@ class UserTest {
 
         Set<ConstraintViolation<User>> validates = validator.validate(user);
         assertTrue(validates.size() > 0);
-        assertEquals("должно содержать прошедшую дату", validates.iterator().next().getMessage(),
+        assertEquals("birthday",
+                      validates.iterator().next().getPropertyPath().toString(),
                 "Не корректно отработала валидация - даты рождения пользователя");
     }
 }

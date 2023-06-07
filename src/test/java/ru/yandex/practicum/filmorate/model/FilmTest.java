@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.service.defaultFactory;
+import ru.yandex.practicum.filmorate.service.DefaultFactory;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -20,14 +20,15 @@ class FilmTest {
 
     // Инициализация Validator
     private static final Validator validator;
+
     static {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.usingContext().getValidator();
     }
 
     //Пример корректно заполненного фильма
-    private final static Film correctFilm = new Film(1,"Стражи галактики 3","фантастика, боевик",
-                                                LocalDate.of(2023,Month.APRIL,22), 149);
+    private static final Film correctFilm = new Film(1, "Стражи галактики 3", "фантастика, боевик",
+            LocalDate.of(2023, Month.APRIL, 22), 149);
 
     @DisplayName("Должны получить пакет ошибок при создании сущности Film c null полями")
     @Test
@@ -44,7 +45,7 @@ class FilmTest {
         final Film film = new Film(correctFilm);
 
         Set<ConstraintViolation<Film>> validates = validator.validate(film);
-        assertEquals(validates.size(),0, "Фильм должен был пройти валидацию");
+        assertEquals(validates.size(), 0, "Фильм должен был пройти валидацию");
     }
 
     @DisplayName("Должны получить ошибку, если название пустое")
@@ -56,8 +57,9 @@ class FilmTest {
         Set<ConstraintViolation<Film>> validates = validator.validate(film);
 
         assertTrue(validates.size() > 0);
-        assertEquals("не должно быть пустым", validates.iterator().next().getMessage(),
-                    "Не корректно отработала валидация - пустое название фильма");
+
+        assertEquals("name", validates.iterator().next().getPropertyPath().toString(),
+                "Не корректно отработала валидация - пустое название фильма");
     }
 
     @DisplayName("Должны получить ошибку по превышению символов в описании")
@@ -65,14 +67,13 @@ class FilmTest {
     public void validateDescription() {
         final Film film = new Film(correctFilm);
         //Добавляем описание
-        film.setDescription("!".repeat(defaultFactory.MAX_LENGTH_DESCRIPTION + 1));
+        film.setDescription("!".repeat(DefaultFactory.MAX_LENGTH_DESCRIPTION + 1));
 
         Set<ConstraintViolation<Film>> validates = validator.validate(film);
         assertTrue(validates.size() > 0);
 
-        assertEquals("размер должен находиться в диапазоне от 0 до " + defaultFactory.MAX_LENGTH_DESCRIPTION,
-                              validates.iterator().next().getMessage(),
-                      "Не корректно отработала валидация - размер описания фильма");
+        assertEquals("description", validates.iterator().next().getPropertyPath().toString(),
+                "Не корректно отработала валидация - размер описания фильма");
     }
 
     @DisplayName("Должны получить ошибку по дате релиза")
@@ -84,8 +85,7 @@ class FilmTest {
         Set<ConstraintViolation<Film>> validates = validator.validate(film);
         assertTrue(validates.size() > 0);
 
-        assertEquals("дата релиза должна быть позже - " + defaultFactory.FIRST_DATE_RELEASE,
-                validates.iterator().next().getMessage(),
+        assertEquals("releaseDate", validates.iterator().next().getPropertyPath().toString(),
                 "Не корректно отработала валидация - дата релиза фильма");
     }
 
@@ -98,8 +98,8 @@ class FilmTest {
         Set<ConstraintViolation<Film>> validates = validator.validate(film);
         assertTrue(validates.size() > 0);
 
-        assertEquals("должно быть больше 0",
-                       validates.iterator().next().getMessage(),
-                      "Не корректно отработала валидация - продолжительность фильма");
+        assertEquals("duration",
+                validates.iterator().next().getPropertyPath().toString(),
+                "Не корректно отработала валидация - продолжительность фильма");
     }
 }
