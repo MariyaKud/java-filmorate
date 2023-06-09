@@ -5,11 +5,11 @@ import ru.yandex.practicum.filmorate.validator.CannotHaveBlank;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Past;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 
 import java.time.LocalDate;
 
@@ -20,22 +20,27 @@ public class User {
 
     private int id;
     //логин не может быть пустым и содержать пробелы;
-    @NonNull
     @NotBlank
     @CannotHaveBlank
     private String login;
     //Если имя пустое, то login
     private String name;
     //электронная почта не может быть пустой и должна содержать символ @
-    @NonNull
     @NotBlank
     @Email
     private String email;
     //дата рождения не может быть в будущем.
-    @Past
+    @NotNull
+    @PastOrPresent
     private LocalDate birthday;
 
     public User(User other) {
         this(other.getId(), other.getLogin(), other.getName(), other.getEmail(), other.getBirthday());
+    }
+
+    public void setNameAsLoginForEmptyName() {
+        if (name == null || name.isBlank()) {
+            name = login;
+        }
     }
 }

@@ -1,11 +1,11 @@
 package ru.yandex.practicum.filmorate.repository;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface Repository<E> {
     E save(E e);
 
-    Collection<E> getAll();
+    List<E> getAll();
 
-    boolean findById(int id);
+    boolean exists(int id);
 }

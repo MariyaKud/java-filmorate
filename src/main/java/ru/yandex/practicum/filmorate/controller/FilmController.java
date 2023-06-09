@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ru.yandex.practicum.filmorate.exeption.InvalidIdException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.repository.FilmRepository;
+import ru.yandex.practicum.filmorate.repository.Repository;
 import ru.yandex.practicum.filmorate.service.DefaultFactory;
 
 import javax.validation.Valid;
-import java.util.Collection;
+import java.util.List;
 
 @RestController
 @Slf4j
 @RequestMapping("/films")
 public class FilmController {
 
-    private final FilmRepository filmRepository = DefaultFactory.getDefaultFilmRepository();
+    private final Repository<Film> filmRepository = DefaultFactory.getDefaultFilmRepository();
 
     /**
      * Получить список фильмов
@@ -30,7 +30,7 @@ public class FilmController {
      * @return коллекция фильмов
      */
     @GetMapping
-    public Collection<Film> findAll() {
+    public List<Film> findAll() {
         return filmRepository.getAll();
     }
 
@@ -45,15 +45,12 @@ public class FilmController {
 
         log.info("Добавить фильм - начало:" + film);
 
-        if (filmRepository.findById(film.getId())) {
-            throw new InvalidIdException("Уже существует фильм с id = " + film.getId());
-        }
         film.setId(0);
-        final Film newFilm = filmRepository.save(film);
+        filmRepository.save(film);
 
-        log.info("Добавить фильм - конец:" + newFilm);
+        log.info("Добавить фильм - конец:" + film);
 
-        return newFilm;
+        return film;
     }
 
     /**
@@ -64,14 +61,16 @@ public class FilmController {
      */
     @PutMapping
     public Film save(@Valid @RequestBody Film film) {
+
         log.info("Обновить данные по фильму - начало:" + film);
 
-        if (!filmRepository.findById(film.getId()))  {
+        if (!filmRepository.exists(film.getId()))  {
             throw new InvalidIdException("Не найден фильм с id = " + film.getId());
         }
-        final Film updateFilm = filmRepository.save(film);
-        log.info("Обновить данные по фильму - конец:" + updateFilm);
+        filmRepository.save(film);
 
-        return updateFilm;
+        log.info("Обновить данные по фильму - конец:" + film);
+
+        return film;
     }
 }

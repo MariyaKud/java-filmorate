@@ -1,14 +1,15 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.NoArgsConstructor;
+
 import ru.yandex.practicum.filmorate.validator.ReleaseDateFilm;
 import ru.yandex.practicum.filmorate.service.DefaultFactory;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
@@ -21,13 +22,14 @@ public class Film {
 
     private int id;
     //Название не может быть пустым
-    @NonNull
     @NotBlank
     private String name;
     //Максимальная длина описания - MAX_LENGTH_DESCRIPTION символов
+    @NotNull
     @Size(max = DefaultFactory.MAX_LENGTH_DESCRIPTION)
     private String description;
-    //дата релиза — не раньше 28 декабря 1895 года;
+    //дата релиза — не реаньше 28 декабря 1895 года;
+    @NotNull
     @ReleaseDateFilm
     private LocalDate releaseDate;
     //продолжительность фильма должна быть положительной

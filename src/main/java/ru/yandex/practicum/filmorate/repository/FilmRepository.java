@@ -2,8 +2,9 @@ package ru.yandex.practicum.filmorate.repository;
 
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FilmRepository implements Repository<Film> {
@@ -25,12 +26,12 @@ public class FilmRepository implements Repository<Film> {
     }
 
     @Override
-    public Collection<Film> getAll() {
-        return films.values();
+    public List<Film> getAll() {
+        return new ArrayList<>(films.values());
     }
 
     @Override
-    public boolean findById(int id) {
+    public boolean exists(int id) {
         return films.containsKey(id);
     }
 }
