@@ -1,4 +1,6 @@
-package ru.yandex.practicum.filmorate.repository;
+package ru.yandex.practicum.filmorate.storage;
+
+import org.springframework.stereotype.Repository;
 
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -7,9 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FilmRepository implements Repository<Film> {
+@Repository
+public class InMemoryFilmStorage implements Storage<Film> {
     private int id = 1;
-    private final Map<Integer, Film> films = new HashMap<>();
+    private final Map<Long, Film> films = new HashMap<>();
 
     private int getId() {
         return id++;
@@ -22,7 +25,7 @@ public class FilmRepository implements Repository<Film> {
             film.setId(getId());
         }
         films.put(film.getId(), film);
-        return films.get(film.getId());
+        return film;
     }
 
     @Override
@@ -31,7 +34,12 @@ public class FilmRepository implements Repository<Film> {
     }
 
     @Override
-    public boolean exists(int id) {
+    public boolean exists(Long id) {
         return films.containsKey(id);
+    }
+
+    @Override
+    public Film findById(Long id) {
+        return films.get(id);
     }
 }

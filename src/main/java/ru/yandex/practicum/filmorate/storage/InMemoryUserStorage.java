@@ -1,4 +1,6 @@
-package ru.yandex.practicum.filmorate.repository;
+package ru.yandex.practicum.filmorate.storage;
+
+import org.springframework.stereotype.Repository;
 
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -7,9 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UserRepository implements Repository<User> {
+@Repository
+public class InMemoryUserStorage implements Storage<User> {
     private int id = 1;
-    private final Map<Integer, User> users = new HashMap<>();
+    private final Map<Long, User> users = new HashMap<>();
 
     private int getId() {
         return id++;
@@ -22,7 +25,7 @@ public class UserRepository implements Repository<User> {
             user.setId(getId());
         }
         users.put(user.getId(), user);
-        return users.get(user.getId());
+        return user;
     }
 
     @Override
@@ -31,7 +34,12 @@ public class UserRepository implements Repository<User> {
     }
 
     @Override
-    public boolean exists(int id) {
+    public boolean exists(Long id) {
         return users.containsKey(id);
+    }
+
+    @Override
+    public User findById(Long id) {
+        return users.get(id);
     }
 }
