@@ -1,13 +1,14 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface Storage<E> {
-    E save(E e);
+    void save(E e);
 
     List<E> getAll();
 
-    boolean exists(Long id);
+    List<E> getPopular(int size);
 
-    E findById(Long id);
+    Optional<E> findById(Long id);
 }

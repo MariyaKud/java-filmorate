@@ -1,13 +1,15 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import org.springframework.stereotype.Repository;
-
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryUserStorage implements Storage<User> {
@@ -19,13 +21,12 @@ public class InMemoryUserStorage implements Storage<User> {
     }
 
     @Override
-    public User save(User user) {
+    public void save(User user) {
         if (user.getId() == 0) {
             //Новый пользователь
             user.setId(getId());
         }
         users.put(user.getId(), user);
-        return user;
     }
 
     @Override
@@ -34,12 +35,15 @@ public class InMemoryUserStorage implements Storage<User> {
     }
 
     @Override
-    public boolean exists(Long id) {
-        return users.containsKey(id);
+    public List<User> getPopular(int size) {
+        return getAll().stream()
+                .sorted(Comparator.comparing(User::getAmountFriends).reversed())
+                .limit(size)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public User findById(Long id) {
-        return users.get(id);
+    public Optional<User> findById(Long id) {
+        return Optional.ofNullable(users.get(id));
     }
 }

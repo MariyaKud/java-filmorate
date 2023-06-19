@@ -2,18 +2,17 @@ package ru.yandex.practicum.filmorate.model;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.service.DefaultFactory;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("Тестируем валидность сущности - Film")
 class FilmTest {
@@ -28,7 +27,7 @@ class FilmTest {
 
     //Пример корректно заполненного фильма
     private static final Film correctFilm = new Film(1, "Стражи галактики 3", "фантастика, боевик",
-            LocalDate.of(2023, Month.APRIL, 22), 149, 0);
+            LocalDate.of(2023, Month.APRIL, 22), 149);
 
     @DisplayName("Должны получить пакет ошибок при создании сущности Film c null полями")
     @Test
@@ -67,7 +66,7 @@ class FilmTest {
     public void validateDescription() {
         final Film film = new Film(correctFilm);
         //Добавляем описание
-        film.setDescription("!".repeat(DefaultFactory.MAX_LENGTH_DESCRIPTION + 1));
+        film.setDescription("!".repeat(Film.MAX_LENGTH_DESCRIPTION + 1));
 
         Set<ConstraintViolation<Film>> validates = validator.validate(film);
         assertTrue(validates.size() > 0);

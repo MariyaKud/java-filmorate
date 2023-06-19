@@ -1,31 +1,25 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import ru.yandex.practicum.filmorate.exeption.InvalidIdException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.Storage;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserService {
+
     private final Storage<User> userStorage;
 
-    @Autowired
-    public UserService(Storage<User> userStorage) {
-        this.userStorage = userStorage;
-    }
-
     public List<User> getAllUsers() {
-        return new ArrayList<>(userStorage.getAll());
+        return userStorage.getAll();
     }
 
     public User createUser(User user) {
@@ -45,9 +39,9 @@ public class UserService {
 
         log.info("Обновить пользователя - конец:" + user);
 
-        if (!userStorage.exists(user.getId())) {
-            throw new InvalidIdException(String.format("Пользователь с id = %s не найден", user.getId()));
-        }
+        userStorage.findById(user.getId()).orElseThrow(()
+                -> new InvalidIdException(String.format("Пользователь с id = %s не найден", user.getId())));
+
         setNameAsLoginForEmptyName(user);
         userStorage.save(user);
 
@@ -58,90 +52,75 @@ public class UserService {
 
     public User addFriend(Long id, Long friendId) {
 
-        if (!userStorage.exists(id)) {
-            throw new InvalidIdException(String.format("Пользователь с id = %s не найден", id));
-        }
-
-        if (!userStorage.exists(friendId)) {
-            throw new InvalidIdException(String.format("Пользователь с id = %s не найден", friendId));
-        }
+        log.info(String.format("Подружим пользователей с id: %s, %s - начало", id, friendId));
 
         //Пока пользователям не надо одобрять заявки в друзья — добавляем сразу
-        User friend1 = userStorage.findById(id);
-        User friend2 = userStorage.findById(friendId);
+        final User friend1 = userStorage.findById(id).orElseThrow(()
+                -> new InvalidIdException(String.format("Пользователь с id = %s не найден", id)));
+        final User friend2 = userStorage.findById(friendId).orElseThrow(()
+                -> new InvalidIdException(String.format("Пользователь с id = %s не найден", friendId)));
 
         friend1.addFriend(friendId);
         friend2.addFriend(id);
+
+        log.info(String.format("Подружим пользователей с id: %s, %s - конец", id, friendId));
 
         return friend1;
     }
 
     public void deleteFriend(Long id, Long friendId) {
 
-        if (!userStorage.exists(id)) {
-            throw new InvalidIdException(String.format("Пользователь с id = %s не найден", id));
-        }
-
-        if (!userStorage.exists(friendId)) {
-            throw new InvalidIdException(String.format("Пользователь с id = %s не найден", friendId));
-        }
+        log.info(String.format("Раздружим пользователей с id: %s, %s - начало", id, friendId));
 
         //Пока пользователям не надо одобрять заявки в друзья — добавляем сразу
-        User friend1 = userStorage.findById(id);
-        User friend2 = userStorage.findById(friendId);
+        final User friend1 = userStorage.findById(id).orElseThrow(()
+                -> new InvalidIdException(String.format("Пользователь с id = %s не найден", id)));
+        final User friend2 = userStorage.findById(friendId).orElseThrow(()
+                -> new InvalidIdException(String.format("Пользователь с id = %s не найден", friendId)));
 
         friend1.getFriends().remove(friendId);
         friend2.getFriends().remove(id);
+
+        log.info(String.format("Раздружим пользователей с id: %s, %s - конец", id, friendId));
     }
 
     public List<User> getAllFriends(Long id) {
 
-        if (!userStorage.exists(id)) {
-            throw new InvalidIdException(String.format("Пользователь с id = %s не найден", id));
-        }
-
-        User user = userStorage.findById(id);
+        final User user = userStorage.findById(id).orElseThrow(()
+                -> new InvalidIdException(String.format("Пользователь с id = %s не найден", id)));
 
         return user.getFriends().stream()
                 .map(userStorage::findById)
+                .map(o -> o.orElse(null))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
     public User findUserById(Long id) {
-        if (!userStorage.exists(id)) {
-            throw new InvalidIdException(String.format("Пользователь с id = %s не найден", id));
-        }
-        return userStorage.findById(id);
+        return userStorage.findById(id).orElseThrow(()
+                -> new InvalidIdException(String.format("Пользователь с id = %s не найден", id)));
     }
 
     public List<User> findCommonFriends(Long id, Long otherId) {
 
-        if (!userStorage.exists(id)) {
-            throw new InvalidIdException(String.format("Пользователь с id = %s не найден", id));
-        }
+        final User person1 = userStorage.findById(id).orElseThrow(()
+                -> new InvalidIdException(String.format("Пользователь с id = %s не найден", id)));
+        final User person2 = userStorage.findById(otherId).orElseThrow(()
+                -> new InvalidIdException(String.format("Пользователь с id = %s не найден", otherId)));
 
-        if (!userStorage.exists(otherId)) {
-            throw new InvalidIdException(String.format("Пользователь с id = %s не найден", otherId));
-        }
-
-        User person1 = userStorage.findById(id);
-        User person2 = userStorage.findById(otherId);
-
-        if (person1.getFriends() == null || person2.getFriends() == null) {
-            return new ArrayList<>();
-
-        } else if (person1.getFriends().size() > person2.getFriends().size()) {
+        if (person1.getFriends().size() > person2.getFriends().size()) {
             return person2.getFriends()
-                          .stream()
-                          .filter(f -> person1.getFriends().contains(f))
-                          .map(userStorage::findById)
-                          .collect(Collectors.toList());
+                    .stream()
+                    .filter(f -> person1.getFriends().contains(f))
+                    .map(userStorage::findById)
+                    .map(o -> o.orElse(null))
+                    .collect(Collectors.toList());
         } else {
             return person1.getFriends()
                     .stream()
                     .filter(f -> person2.getFriends().contains(f))
                     .map(userStorage::findById)
+                    .map(o -> o.orElse(null))
                     .collect(Collectors.toList());
         }
     }
