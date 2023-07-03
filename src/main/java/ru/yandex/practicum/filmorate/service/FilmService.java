@@ -44,8 +44,7 @@ public class FilmService {
 
         log.info("Обновить данные по фильму - начало:" + film);
 
-        filmStorage.findById(film.getId()).orElseThrow(()
-                -> new InvalidIdException("Не найден фильм с id = " + film.getId()));
+        findFilmById(film.getId());
         filmStorage.save(film);
 
         log.info("Обновить данные по фильму - конец:" + film);
@@ -56,9 +55,8 @@ public class FilmService {
     public void addLike(Long idFilm, Long idUser) {
         log.info("Добавить фильму с id = " + idFilm + " лайк от пользователя с id =" + idUser + " - начало:");
 
-        final Film film = filmStorage.findById(idFilm).orElseThrow(()
-                -> new InvalidIdException("Не найден фильм с id = " + idFilm));
-        film.addLike(idFilm);
+        final Film film = findFilmById(idFilm);
+        film.addLike(idUser);
 
         log.info("Добавить фильму с id = " + idFilm + " лайк от пользователя с id =" + idUser + " - конец:");
     }
@@ -66,9 +64,7 @@ public class FilmService {
     public void deleteLike(Long idFilm, Long idUser) {
         log.info("Удалить у фильма с id = " + idFilm + " лайк от пользователя с id =" + idUser + " - начало:");
 
-        final Film film = filmStorage.findById(idFilm).orElseThrow(() ->
-                new InvalidIdException("Не найден фильм с id = " + idFilm));
-
+        final Film film = findFilmById(idFilm);
         final User user = userStorage.findById(idUser).orElseThrow(() ->
                 new InvalidIdException("Не найден пользователь с id = " + idFilm));
 

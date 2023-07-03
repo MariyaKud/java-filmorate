@@ -22,6 +22,11 @@ public class UserService {
         return userStorage.getAll();
     }
 
+    public User findUserById(Long id) {
+        return userStorage.findById(id).orElseThrow(()
+                -> new InvalidIdException(String.format("Пользователь с id = %s не найден", id)));
+    }
+
     public User createUser(User user) {
 
         log.info("Добавить пользователя - начало:" + user);
@@ -39,9 +44,7 @@ public class UserService {
 
         log.info("Обновить пользователя - конец:" + user);
 
-        userStorage.findById(user.getId()).orElseThrow(()
-                -> new InvalidIdException(String.format("Пользователь с id = %s не найден", user.getId())));
-
+        findUserById(user.getId());
         setNameAsLoginForEmptyName(user);
         userStorage.save(user);
 
@@ -55,10 +58,8 @@ public class UserService {
         log.info(String.format("Подружим пользователей с id: %s, %s - начало", id, friendId));
 
         //Пока пользователям не надо одобрять заявки в друзья — добавляем сразу
-        final User friend1 = userStorage.findById(id).orElseThrow(()
-                -> new InvalidIdException(String.format("Пользователь с id = %s не найден", id)));
-        final User friend2 = userStorage.findById(friendId).orElseThrow(()
-                -> new InvalidIdException(String.format("Пользователь с id = %s не найден", friendId)));
+        final User friend1 = findUserById(id);
+        final User friend2 = findUserById(friendId);
 
         friend1.addFriend(friendId);
         friend2.addFriend(id);
@@ -73,10 +74,8 @@ public class UserService {
         log.info(String.format("Раздружим пользователей с id: %s, %s - начало", id, friendId));
 
         //Пока пользователям не надо одобрять заявки в друзья — добавляем сразу
-        final User friend1 = userStorage.findById(id).orElseThrow(()
-                -> new InvalidIdException(String.format("Пользователь с id = %s не найден", id)));
-        final User friend2 = userStorage.findById(friendId).orElseThrow(()
-                -> new InvalidIdException(String.format("Пользователь с id = %s не найден", friendId)));
+        final User friend1 = findUserById(id);
+        final User friend2 = findUserById(friendId);
 
         friend1.getFriends().remove(friendId);
         friend2.getFriends().remove(id);
@@ -86,8 +85,7 @@ public class UserService {
 
     public List<User> getAllFriends(Long id) {
 
-        final User user = userStorage.findById(id).orElseThrow(()
-                -> new InvalidIdException(String.format("Пользователь с id = %s не найден", id)));
+        final User user = findUserById(id);
 
         return user.getFriends().stream()
                 .map(userStorage::findById)
@@ -96,38 +94,40 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public User findUserById(Long id) {
-        return userStorage.findById(id).orElseThrow(()
-                -> new InvalidIdException(String.format("Пользователь с id = %s не найден", id)));
-    }
-
     public List<User> findCommonFriends(Long id, Long otherId) {
 
-        final User person1 = userStorage.findById(id).orElseThrow(()
-                -> new InvalidIdException(String.format("Пользователь с id = %s не найден", id)));
-        final User person2 = userStorage.findById(otherId).orElseThrow(()
-                -> new InvalidIdException(String.format("Пользователь с id = %s не найден", otherId)));
+        final User person1 = findUserById(id);
+        final User person2 = findUserById(otherId);
 
         if (person1.getFriends().size() > person2.getFriends().size()) {
-            return person2.getFriends()
-                    .stream()
-                    .filter(f -> person1.getFriends().contains(f))
-                    .map(userStorage::findById)
-                    .map(o -> o.orElse(null))
-                    .collect(Collectors.toList());
+            return getCommonFriends(person2, person1);
         } else {
-            return person1.getFriends()
-                    .stream()
-                    .filter(f -> person2.getFriends().contains(f))
-                    .map(userStorage::findById)
-                    .map(o -> o.orElse(null))
-                    .collect(Collectors.toList());
+            return getCommonFriends(person1, person2);
         }
     }
 
+    /**
+     * Контроль заполнения имени пользователя, если не заполнено то в качестве имени устанавливаем логин
+     * @param user пользователь
+     */
     private void setNameAsLoginForEmptyName(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
+    }
+
+    /**
+     * Найти список общих друзей
+     * @param person1 пользователь у которого меньше друзей
+     * @param person2 пользователь у которого больше друзей
+     * @return список общих друзей
+     */
+    private List<User> getCommonFriends(User person1, User person2) {
+        return person1.getFriends()
+                .stream()
+                .filter(f -> person2.getFriends().contains(f))
+                .map(userStorage::findById)
+                .map(o -> o.orElse(null))
+                .collect(Collectors.toList());
     }
 }
