@@ -13,9 +13,6 @@ public class CannotHaveBlankValidator implements ConstraintValidator<CannotHaveB
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         // Нет проверки, когда ноль
-        if (value != null && value.contains(" ")) {
-            return false;
-        }
-        return true;
+        return value == null || !value.contains(" ");
     }
 }

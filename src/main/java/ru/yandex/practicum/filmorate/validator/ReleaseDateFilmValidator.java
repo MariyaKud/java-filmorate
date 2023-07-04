@@ -2,13 +2,11 @@ package ru.yandex.practicum.filmorate.validator;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
 import java.time.LocalDate;
-
-import ru.yandex.practicum.filmorate.service.DefaultFactory;
+import java.time.Month;
 
 public class ReleaseDateFilmValidator implements ConstraintValidator<ReleaseDateFilm, LocalDate> {
-
+    public static final LocalDate FIRST_DATE_RELEASE = LocalDate.of(1895, Month.DECEMBER, 28);
 
     @Override
     public void initialize(ReleaseDateFilm constraintAnnotation) {
@@ -21,9 +19,9 @@ public class ReleaseDateFilmValidator implements ConstraintValidator<ReleaseDate
             // Отключаем подсказку по умолчанию
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate() +
-                            " - " + DefaultFactory.FIRST_DATE_RELEASE)
+                            " - " + FIRST_DATE_RELEASE)
                             .addConstraintViolation();
-            return value.isAfter(DefaultFactory.FIRST_DATE_RELEASE);
+            return value.isAfter(FIRST_DATE_RELEASE);
         }
         return true;
     }
