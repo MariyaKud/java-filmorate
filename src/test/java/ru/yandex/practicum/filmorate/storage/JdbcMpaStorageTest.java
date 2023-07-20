@@ -69,7 +69,7 @@ class JdbcMpaStorageTest {
 
     @Test
     @DisplayName("Вернет список из рейтингов в количестве переданного списка идентификаторов (id корректные)")
-    public void testFindForExistIds(){
+    public void testFindForExistIds() {
         Set<Long> ids = new HashSet<>();
         ids.add(1L);
         ids.add(2L);
@@ -83,7 +83,7 @@ class JdbcMpaStorageTest {
 
     @Test
     @DisplayName("Вернет список рейтингов размером меньше, чем список идентификаторов (есть не существующие id)")
-    public void testFindForExistAndNotExistIds(){
+    public void testFindForExistAndNotExistIds() {
         Set<Long> ids = new HashSet<>();
         ids.add(1L);
         ids.add(10L);
@@ -96,7 +96,7 @@ class JdbcMpaStorageTest {
 
     @Test
     @DisplayName("Должен получить пустой список (все идентификаторы не корректны)")
-    public void testFindGenresForNotExistIds(){
+    public void testFindGenresForNotExistIds() {
         Set<Long> ids = new HashSet<>();
         ids.add(10L);
         ids.add(100L);
