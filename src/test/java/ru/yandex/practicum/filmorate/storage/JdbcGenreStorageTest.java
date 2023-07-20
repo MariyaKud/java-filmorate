@@ -72,7 +72,7 @@ class JdbcGenreStorageTest {
 
     @Test
     @DisplayName("Вернет список из 2 жанров")
-    public void testFindGenresForExistIds(){
+    public void testFindGenresForExistIds() {
         Set<Long> ids = new HashSet<>();
         ids.add(1L);
         ids.add(2L);
@@ -86,7 +86,7 @@ class JdbcGenreStorageTest {
 
     @Test
     @DisplayName("Будут найдены жанры только с существующими id")
-    public void testFindGenresForExistAndNotExistIds(){
+    public void testFindGenresForExistAndNotExistIds() {
         Set<Long> ids = new HashSet<>();
         ids.add(1L);
         ids.add(10L);
@@ -99,7 +99,7 @@ class JdbcGenreStorageTest {
 
     @Test
     @DisplayName("Должен быть пустой список")
-    public void testFindGenresForNotExistIds(){
+    public void testFindGenresForNotExistIds() {
         Set<Long> ids = new HashSet<>();
         ids.add(10L);
         ids.add(100L);
