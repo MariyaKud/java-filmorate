@@ -114,7 +114,8 @@ public class jdbcFilmsStorage implements Storage<Film> {
     }
 
     private void setFilmGenres(Film film) {
-        if (film.getGenres() == null || film.getGenres() .isEmpty()) {
+
+        if (film.getGenres() == null || film.getGenres().isEmpty()) {
             return;
         }
 
