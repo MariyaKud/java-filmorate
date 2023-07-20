@@ -163,7 +163,7 @@ class JdbcFilmsStorageTest {
     }
 
     @Test
-    @DisplayName("Должен вернуть список из одного фильма - Best film" )
+    @DisplayName("Должен вернуть список из одного фильма - Best film")
     void getPopular() {
         final List<Film> films = filmsRepository.getPopular(1);
         assertEquals(1, films.size());
