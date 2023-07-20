@@ -21,13 +21,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @JdbcTest
 @Import(JdbcUserStorage.class)
 @DisplayName("Проверка репозитория пользователей")
-class JdbcUserRepositoryTest {
+class JdbcUserStorageTest {
 
     @Autowired
     private Storage<User> userRepository;
 
     private static final User correctUser = new User(0, "login", "User", "User@mail.ru",
                                                       LocalDate.of(2003, Month.APRIL, 22));
+
     @Test
     @DisplayName("Найдет пользователя обернутого в Optional из базы по корректному id")
     public void testFindUserByExistId() {
