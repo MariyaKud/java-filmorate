@@ -103,11 +103,10 @@ public class UserController {
      * Добавить пользователя в друзья, транзитивные отношения
      * @param id идентификатор первого пользователя
      * @param friendId идентификатор второго пользователя
-     * @return пользователь, которому добавили друга
      */
     @PutMapping("/{id}/friends/{friendId}")
-    public User addFriendForUserById(@PathVariable Long id, @PathVariable Long friendId) {
-        return userService.addFriend(id, friendId);
+    public void addFriendForUserById(@PathVariable Long id, @PathVariable Long friendId) {
+        userService.addFriend(id, friendId);
     }
 
     /**

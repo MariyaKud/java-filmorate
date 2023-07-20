@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,6 +20,7 @@ public class Film {
 
     public static final int MAX_LENGTH_DESCRIPTION = 200;
 
+    @NotNull
     private long id;
     //Название не может быть пустым
     @NotBlank
@@ -36,20 +36,27 @@ public class Film {
     //продолжительность фильма должна быть положительной
     @Positive
     private int duration;
-    //Список id пользователей, поставивших лайк фильму
-    @JsonIgnore
-    private final Set<Long> likes = new HashSet<>();
+    //Возрастной рейтинг - id
+    @NotNull
+    private Mpa mpa;
+    //жанры фильма
+    private final Set<Genre> genres = new HashSet<>();
 
     public Film(Film other) {
-        this(other.getId(), other.getName(), other.getDescription(), other.getReleaseDate(),
-                other.getDuration());
+        this(other.getId(), other.getName(), other.getDescription(),
+                other.getReleaseDate(), other.getDuration(), other.getMpa());
     }
 
-    public void addLike(Long userId) {
-        likes.add(userId);
+    public void setGenres(Set<Genre> genresFilm) {
+        clearGenres();
+        genres.addAll(genresFilm);
     }
 
-    public int getAmountLikes() {
-        return likes.size();
+    public void setGenre(Genre genre) {
+        genres.add(genre);
+    }
+
+    public void clearGenres() {
+        genres.clear();
     }
 }
