@@ -13,7 +13,7 @@ import java.util.Set;
 @Repository
 @RequiredArgsConstructor
 @Primary
-public class jdbcLikesStorage implements StorageProperties {
+public class JdbcLikesStorage implements StorageProperties {
 
     private final NamedParameterJdbcOperations jdbcOperations;
 

@@ -13,7 +13,7 @@ import java.util.Set;
 @Repository
 @RequiredArgsConstructor
 @Primary
-public class jdbcFriendsStorage implements StorageProperties {
+public class JdbcFriendsStorage implements StorageProperties {
 
     private final NamedParameterJdbcOperations jdbcOperations;
 

@@ -13,8 +13,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @JdbcTest
 @DisplayName("Проверка репозитория друзей")
-@Import(jdbcFriendsStorage.class)
-class jdbcFriendsStorageTest {
+@Import(JdbcFriendsStorage.class)
+class JdbcFriendsStorageTest {
 
     @Autowired
     private StorageProperties friendsRepository;

@@ -18,7 +18,7 @@ import java.util.Set;
 @Repository
 @RequiredArgsConstructor
 @Primary
-public class jdbcMpaStorage implements StorageForRead<Mpa> {
+public class JdbcMpaStorage implements StorageForRead<Mpa> {
 
     private final NamedParameterJdbcOperations jdbcOperations;
 

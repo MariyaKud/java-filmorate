@@ -19,9 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @JdbcTest
-@Import(jdbcUserStorage.class)
+@Import(JdbcUserStorage.class)
 @DisplayName("Проверка репозитория пользователей")
-class jdbcUserStorageTest {
+class JdbcUserRepositoryTest {
 
     @Autowired
     private Storage<User> userRepository;

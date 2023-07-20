@@ -12,9 +12,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @JdbcTest
-@Import(jdbcLikesStorage.class)
+@Import(JdbcLikesStorage.class)
 @DisplayName("Проверка репозитория лайков")
-class jdbcLikesStorageTest {
+class JdbcLikesStorageTest {
 
     @Autowired
     private StorageProperties likesRepository;

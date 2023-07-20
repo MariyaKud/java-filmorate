@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Repository
 @RequiredArgsConstructor
 @Primary
-public class jdbcFilmsStorage implements Storage<Film> {
+public class JdbcFilmsStorage implements Storage<Film> {
 
     private final NamedParameterJdbcOperations jdbcOperations;
 

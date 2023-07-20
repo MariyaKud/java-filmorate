@@ -17,8 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @JdbcTest
 @DisplayName("Проверка репозитория возрастных рейтингов")
-@Import(jdbcMpaStorage.class)
-class jdbcMpaStorageTest {
+@Import(JdbcMpaStorage.class)
+class JdbcMpaStorageTest {
 
     @Autowired
     private StorageForRead<Mpa> mpaRepository;

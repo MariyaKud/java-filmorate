@@ -8,9 +8,9 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.JdbcLikesStorage;
 import ru.yandex.practicum.filmorate.storage.Storage;
 import ru.yandex.practicum.filmorate.storage.StorageForRead;
-import ru.yandex.practicum.filmorate.storage.jdbcLikesStorage;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +26,7 @@ public class FilmService {
 
     private final Storage<User> userStorage;
 
-    private final jdbcLikesStorage likesStorage;
+    private final JdbcLikesStorage likesStorage;
 
     private final StorageForRead<Genre> genreStorage;
 

@@ -21,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @JdbcTest
-@Import(jdbcFilmsStorage.class)
+@Import(JdbcFilmsStorage.class)
 @DisplayName("Проверка репозитория фильмов")
-class jdbcFilmsStorageTest {
+class JdbcFilmsStorageTest {
 
     @Autowired
     private Storage<Film> filmsRepository;

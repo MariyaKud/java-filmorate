@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exeption.InvalidIdException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.JdbcFriendsStorage;
 import ru.yandex.practicum.filmorate.storage.Storage;
-import ru.yandex.practicum.filmorate.storage.jdbcFriendsStorage;
 
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +20,7 @@ public class UserService {
 
     private final Storage<User> userStorage;
 
-    private final jdbcFriendsStorage friendsStorage;
+    private final JdbcFriendsStorage friendsStorage;
 
     public List<User> getAllUsers() {
         return userStorage.getAll();

@@ -20,7 +20,7 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @Primary
-public class jdbcUserStorage implements Storage<User> {
+public class JdbcUserStorage implements Storage<User> {
 
     private final NamedParameterJdbcOperations jdbcOperations;
 
