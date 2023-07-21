@@ -37,7 +37,6 @@ public class JdbcFriendsStorage implements StorageProperties {
         map.addValue("propertyId", propertyId);
 
         jdbcOperations.update(sqlQuery, map);
-        System.out.println("удалили");
     }
 
     @Override

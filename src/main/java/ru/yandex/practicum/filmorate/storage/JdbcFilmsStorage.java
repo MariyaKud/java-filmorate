@@ -158,7 +158,7 @@ public class JdbcFilmsStorage implements StorageFilm {
         for (FilmGenre fg : genres) {
             filmMap.get(fg.getFilmId()).setGenre(fg.getGenre());
         }
-	}
+    }
 
     @Component
     private static class FilmRowMapper implements RowMapper<Film> {
