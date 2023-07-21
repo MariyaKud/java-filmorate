@@ -6,19 +6,16 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exeption.InvalidIdException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.JdbcFriendsStorage;
-import ru.yandex.practicum.filmorate.storage.Storage;
+import ru.yandex.practicum.filmorate.storage.StorageUser;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class UserService {
 
-    private final Storage<User> userStorage;
+    private final StorageUser userStorage;
 
     private final JdbcFriendsStorage friendsStorage;
 
@@ -86,27 +83,11 @@ public class UserService {
     }
 
     public List<User> getAllFriends(Long id) {
-
-        return friendsStorage.getAll(id).stream()
-                .map(userStorage::findById)
-                .map(o -> o.orElse(null))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        return userStorage.getFriends(id);
     }
 
     public List<User> findCommonFriends(Long id, Long otherId) {
-
-        findUserById(id);
-        findUserById(otherId);
-
-        Set<Long> firstIds  = friendsStorage.getAll(id);
-        Set<Long> secondIds = friendsStorage.getAll(otherId);
-
-        if (firstIds.size() > secondIds.size()) {
-            return getCommonFriends(secondIds, firstIds);
-        } else {
-            return getCommonFriends(firstIds, secondIds);
-        }
+        return userStorage.getCommonFriends(id, otherId);
     }
 
     //Контроль заполнения имени пользователя, если не заполнено, то в качестве имени устанавливаем логин
@@ -114,15 +95,5 @@ public class UserService {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-    }
-
-    //Находит список общих друзей
-    private List<User> getCommonFriends(Set<Long> firstIds, Set<Long> secondIds) {
-        return  firstIds
-                .stream()
-                .filter(secondIds::contains)
-                .map(userStorage::findById)
-                .map(o -> o.orElse(null))
-                .collect(Collectors.toList());
     }
 }

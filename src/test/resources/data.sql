@@ -13,6 +13,8 @@
 
 --Добавим в друзья пользователя 2 для пользователя 1
   insert into FRIENDS (USER_ID, FRIEND_ID) VALUES (1,2);
+--Добавим в друзья пользователя 2 для пользователя 3
+  insert into FRIENDS (USER_ID, FRIEND_ID) VALUES (3,2);
 
 --Фильм 1
   insert into FILMS (FILM_NAME, DESCRIPTION, RELEASE_DATE, DURATION, MPA_ID)

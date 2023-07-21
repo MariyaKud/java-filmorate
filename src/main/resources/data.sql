@@ -1,27 +1,17 @@
     --Рейтинг Ассоциации кинокомпаний
-    merge into MPA(MPA_ID, MPA_NAME)
-    values (1, 'G');
-    merge into MPA(MPA_ID, MPA_NAME)
-    values (2, 'PG');
-    merge into MPA(MPA_ID, MPA_NAME)
-    values (3, 'PG-13');
-    merge into MPA(MPA_ID, MPA_NAME)
-    values (4, 'R');
-    merge into MPA(MPA_ID, MPA_NAME)
-    values (5, 'NC-17');
+   MERGE INTO MPA (MPA_ID, MPA_NAME)
+           VALUES ( 1, 'G'),
+                  ( 2, 'PG'),
+                  ( 3, 'PG-13'),
+                  ( 4, 'R'),
+                  ( 5, 'NC-17');
 
-    --Жанры фильмов
-    merge into GENRES(GENRE_ID, GENRE_NAME)
-    values (1, 'Комедия');
-    merge into GENRES(GENRE_ID, GENRE_NAME)
-    values (2, 'Драма');
-    merge into GENRES(GENRE_ID, GENRE_NAME)
-    values (3, 'Мультфильм');
-    merge into GENRES(GENRE_ID, GENRE_NAME)
-    values (4, 'Триллер');
-    merge into GENRES(GENRE_ID, GENRE_NAME)
-    values (5, 'Документальный');
-    merge into GENRES(GENRE_ID, GENRE_NAME)
-    values (6, 'Боевик');
-
+   --Жанры фильмов
+   MERGE INTO GENRES (GENRE_ID, GENRE_NAME)
+              VALUES ( 1, 'Комедия'),
+                     ( 2, 'Драма'),
+                     ( 3, 'Мультфильм'),
+                     ( 4, 'Триллер'),
+                     ( 5, 'Документальный'),
+                     ( 6, 'Боевик');
 

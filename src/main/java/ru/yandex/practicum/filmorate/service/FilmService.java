@@ -7,10 +7,10 @@ import ru.yandex.practicum.filmorate.exeption.InvalidIdException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.JdbcLikesStorage;
-import ru.yandex.practicum.filmorate.storage.Storage;
+import ru.yandex.practicum.filmorate.storage.StorageFilm;
 import ru.yandex.practicum.filmorate.storage.StorageForRead;
+import ru.yandex.practicum.filmorate.storage.StorageUser;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,9 +22,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FilmService {
 
-    private final Storage<Film> filmStorage;
+    private final StorageFilm filmStorage;
 
-    private final Storage<User> userStorage;
+    private final StorageUser userStorage;
 
     private final JdbcLikesStorage likesStorage;
 

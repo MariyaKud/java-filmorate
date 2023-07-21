@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Genre;
 
@@ -22,12 +23,14 @@ public class JdbcGenreStorage implements StorageForRead<Genre> {
 
     private final NamedParameterJdbcOperations jdbcOperations;
 
+    private final GenreRowMapper genreMapper;
+
     @Override
     public List<Genre> getAll() {
         final String sqlQuery = "select GENRE_ID, GENRE_NAME " +
                                 "from GENRES ";
 
-        return jdbcOperations.query(sqlQuery, new GenreRowMapper());
+        return jdbcOperations.query(sqlQuery, genreMapper);
     }
 
     @Override
@@ -38,7 +41,7 @@ public class JdbcGenreStorage implements StorageForRead<Genre> {
                                 "where GENRE_ID = :genreId ";
 
         final List<Genre> genres = jdbcOperations.query(sqlQuery,
-                                    java.util.Map.of("genreId", id), new GenreRowMapper());
+                                    java.util.Map.of("genreId", id), genreMapper);
 
         if (genres.size() != 1) {
             return Optional.empty();
@@ -57,11 +60,12 @@ public class JdbcGenreStorage implements StorageForRead<Genre> {
                 "from GENRES " +
                 "where GENRE_ID in (:ids)";
 
-        List<Genre> genres = jdbcOperations.query(sqlQuery, parameters, new GenreRowMapper());
+        List<Genre> genres = jdbcOperations.query(sqlQuery, parameters, genreMapper);
 
         return new HashSet<>(genres);
     }
 
+    @Component
     private static class GenreRowMapper implements RowMapper<Genre> {
         @Override
         public Genre mapRow(ResultSet rs, int rowNum) throws SQLException {

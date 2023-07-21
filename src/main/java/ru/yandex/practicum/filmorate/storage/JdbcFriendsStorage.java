@@ -42,17 +42,27 @@ public class JdbcFriendsStorage implements StorageProperties {
 
     @Override
     public int size(Long id) {
-        return getAll(id).size();
+        final String sqlQuery = "select count(FRIEND_ID) as RESULT " +
+                                "from FRIENDS " +
+                                "where USER_ID = :id ";
+
+        final List<Integer> row = jdbcOperations.query(sqlQuery, java.util.Map.of("id", id),
+                                                       (rs, rowNum) -> rs.getInt("RESULT"));
+        if (row.size() > 0) {
+            return row.get(0);
+        } else {
+            return 0;
+        }
     }
 
     @Override
     public Set<Long> getAll(Long id) {
         final String sqlQuery = "select FRIEND_ID " +
-                "from FRIENDS " +
-                "where USER_ID = :id ";
+                                "from FRIENDS " +
+                                "where USER_ID = :id ";
 
-        final List<Long> ids = jdbcOperations.query(sqlQuery,
-                java.util.Map.of("id", id), (rs, rowNum) -> rs.getLong("FRIEND_ID"));
+        final List<Long> ids = jdbcOperations.query(sqlQuery, java.util.Map.of("id", id),
+                                                    (rs, rowNum) -> rs.getLong("FRIEND_ID"));
 
         return new HashSet<>(ids);
     }

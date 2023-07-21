@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -20,9 +21,33 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @Primary
-public class JdbcUserStorage implements Storage<User> {
+public class JdbcUserStorage implements StorageUser {
 
     private final NamedParameterJdbcOperations jdbcOperations;
+
+    private final UserRowMapper userMapper;
+
+    @Override
+    public List<User> getAll() {
+        final String sqlQuery = "select * from USERS ";
+
+        return jdbcOperations.query(sqlQuery, userMapper);
+    }
+
+    @Override
+    public Optional<User> findById(Long id) {
+        final String sqlQuery = "select *" +
+                "from USERS " +
+                "where USER_ID = :userId ";
+
+        final List<User> users = jdbcOperations.query(sqlQuery, Map.of("userId", id), userMapper);
+
+        if (users.size() != 1) {
+            return  Optional.empty();
+        }
+
+        return Optional.ofNullable(users.get(0));
+    }
 
     @Override
     public User save(User user) {
@@ -30,25 +55,22 @@ public class JdbcUserStorage implements Storage<User> {
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         MapSqlParameterSource map = new MapSqlParameterSource();
+        map.addValue("email", user.getEmail());
+        map.addValue("login", user.getLogin());
+        map.addValue("name", user.getName());
+        map.addValue("birthday", user.getBirthday());
 
         if (user.getId() == 0) {
-            map.addValue("email", user.getEmail());
-            map.addValue("login", user.getLogin());
-            map.addValue("name", user.getName());
-            map.addValue("birthday", user.getBirthday());
-
             sqlQuery = "insert into USERS (EMAIL, USER_LOGIN, USER_NAME, BIRTHDAY) " +
                        "values (:email, :login, :name, :birthday)";
+
         } else if (findById(user.getId()).isPresent()) {
             sqlQuery = "UPDATE USERS SET " +
                        "EMAIL= :email, USER_LOGIN= :login, USER_NAME= :name, BIRTHDAY= :birthday " +
                        "WHERE USER_ID=:id";
 
             map.addValue("id", user.getId());
-            map.addValue("email", user.getEmail());
-            map.addValue("login", user.getLogin());
-            map.addValue("name", user.getName());
-            map.addValue("birthday", user.getBirthday());
+
         } else {
             return null;
         }
@@ -61,43 +83,30 @@ public class JdbcUserStorage implements Storage<User> {
     }
 
     @Override
-    public List<User> getAll() {
-        final String sqlQuery = "select * from USERS ";
+    public List<User> getFriends(Long id) {
+        final String sqlQuery = "SELECT u.USER_ID, u.USER_LOGIN, u.USER_NAME, u.EMAIL, u.BIRTHDAY " +
+                "FROM FRIENDS f " +
+                "JOIN USERS u ON f.FRIEND_ID = u.USER_ID " +
+                "WHERE f.USER_ID = :id";
 
-        return jdbcOperations.query(sqlQuery, new UserRowMapper());
+        return jdbcOperations.query(sqlQuery, Map.of("id", id), userMapper);
     }
 
     @Override
-    public List<User> getPopular(int size) {
+    public List<User> getCommonFriends(Long id, Long otherId) {
+        final String sqlQuery = "SELECT u.USER_ID, u.USER_LOGIN, u.USER_NAME, u.EMAIL, u.BIRTHDAY " +
+                                "FROM FRIENDS f JOIN FRIENDS f2 ON f.FRIEND_ID = f2.FRIEND_ID " +
+                                "JOIN USERS u ON f.FRIEND_ID = u.USER_ID " +
+                                "WHERE f.USER_ID = :id AND f2.USER_ID = :otherId";
 
-        final String sqlQuery = "SELECT u.USER_ID, u.USER_LOGIN, u.BIRTHDAY, u.EMAIL, u.USER_NAME " +
-                                "FROM USERS u " +
-                                "LEFT JOIN (SELECT f.FRIEND_ID, count(f.FRIEND_ID) AS ord " +
-                                "           FROM FRIENDS f " +
-                                "           GROUP BY f.FRIEND_ID) " +
-                                "           o ON u.USER_ID = o.FRIEND_ID " +
-                                "order BY o.ord DESC " +
-                                "LIMIT :size";
+        MapSqlParameterSource map = new MapSqlParameterSource();
+        map.addValue("id", id);
+        map.addValue("otherId", otherId);
 
-        return jdbcOperations.query(sqlQuery, Map.of("size", size), new UserRowMapper());
+        return jdbcOperations.query(sqlQuery, map, userMapper);
     }
 
-    @Override
-    public Optional<User> findById(Long id) {
-
-        final String sqlQuery = "select *" +
-                                "from USERS " +
-                                "where USER_ID = :userId ";
-
-        final List<User> users = jdbcOperations.query(sqlQuery, Map.of("userId", id), new UserRowMapper());
-
-        if (users.size() != 1) {
-            return  Optional.empty();
-        }
-
-        return Optional.ofNullable(users.get(0));
-    }
-
+    @Component
     private static class UserRowMapper implements RowMapper<User> {
         @Override
         public User mapRow(ResultSet rs, int rowNum) throws SQLException {

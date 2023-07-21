@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.FilmGenre;
@@ -24,9 +25,13 @@ import java.util.stream.Collectors;
 @Repository
 @RequiredArgsConstructor
 @Primary
-public class JdbcFilmsStorage implements Storage<Film> {
+public class JdbcFilmsStorage implements StorageFilm {
 
     private final NamedParameterJdbcOperations jdbcOperations;
+
+    private final FilmRowMapper filmMapper;
+
+    private final FilmGenreRowMapper genreMapper;
 
     @Override
     public Film save(Film film) {
@@ -69,7 +74,7 @@ public class JdbcFilmsStorage implements Storage<Film> {
                                 "from FILMS f " +
                                 "Left JOIN MPA m ON f.MPA_ID = m.MPA_ID";
 
-        List<Film> films = jdbcOperations.query(sqlQuery, new FilmRowMapper());
+        List<Film> films = jdbcOperations.query(sqlQuery, filmMapper);
 
         loadFilmsGenre(films);
 
@@ -88,7 +93,7 @@ public class JdbcFilmsStorage implements Storage<Film> {
                                 "   order BY count(l.USER_ID) DESC" +
                                 "   LIMIT :size";
 
-        List<Film> films = jdbcOperations.query(sqlQuery, Map.of("size", size), new FilmRowMapper());
+        List<Film> films = jdbcOperations.query(sqlQuery, Map.of("size", size), filmMapper);
 
         loadFilmsGenre(films);
 
@@ -103,7 +108,7 @@ public class JdbcFilmsStorage implements Storage<Film> {
                                 "Left JOIN MPA m ON f.MPA_ID = m.MPA_ID " +
                                 "where FILM_ID = :filmId ";
 
-        final List<Film> films = jdbcOperations.query(sqlQuery, Map.of("filmId", id), new FilmRowMapper());
+        final List<Film> films = jdbcOperations.query(sqlQuery, Map.of("filmId", id), filmMapper);
 
         if (films.size() != 1) {
             return Optional.empty();
@@ -148,14 +153,14 @@ public class JdbcFilmsStorage implements Storage<Film> {
                                 "LEFT JOIN GENRES g on f.GENRE_ID = g.GENRE_ID " +
                                 "WHERE f.FILM_ID in (:ids)";
 
-        List<FilmGenre> genres = jdbcOperations.query(sqlQuery, java.util.Map.of("ids", ids),
-                                                      new FilmGenreRowMapper());
+        List<FilmGenre> genres = jdbcOperations.query(sqlQuery, java.util.Map.of("ids", ids), genreMapper);
 
         for (FilmGenre fg : genres) {
             filmMap.get(fg.getFilmId()).setGenre(fg.getGenre());
         }
 	}
 
+    @Component
     private static class FilmRowMapper implements RowMapper<Film> {
         @Override
         public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -169,6 +174,7 @@ public class JdbcFilmsStorage implements Storage<Film> {
         }
     }
 
+    @Component
     private static class FilmGenreRowMapper implements RowMapper<FilmGenre> {
         @Override
         public FilmGenre mapRow(ResultSet rs, int rowNum) throws SQLException {

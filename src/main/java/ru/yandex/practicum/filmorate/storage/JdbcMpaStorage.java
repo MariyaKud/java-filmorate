@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
@@ -22,12 +23,14 @@ public class JdbcMpaStorage implements StorageForRead<Mpa> {
 
     private final NamedParameterJdbcOperations jdbcOperations;
 
+    private final MpaRowMapper mpaMapper;
+
     @Override
     public List<Mpa> getAll() {
         final String sqlQuery = "select MPA_ID, MPA_NAME " +
                                 "from MPA ";
 
-        return jdbcOperations.query(sqlQuery, new MpaRowMapper());
+        return jdbcOperations.query(sqlQuery, mpaMapper);
     }
 
     @Override
@@ -38,7 +41,7 @@ public class JdbcMpaStorage implements StorageForRead<Mpa> {
                 "where MPA_ID = :mpaId ";
 
         final List<Mpa> genres = jdbcOperations.query(sqlQuery,
-                                                     java.util.Map.of("mpaId", id), new MpaRowMapper());
+                                                     java.util.Map.of("mpaId", id), mpaMapper);
 
         if (genres.size() != 1) {
             return Optional.empty();
@@ -57,11 +60,12 @@ public class JdbcMpaStorage implements StorageForRead<Mpa> {
                 "from MPA " +
                 "where MPA_ID in (:ids)";
 
-        List<Mpa> mpas = jdbcOperations.query(sqlQuery, parameters, new MpaRowMapper());
+        List<Mpa> mpas = jdbcOperations.query(sqlQuery, parameters, mpaMapper);
 
         return new HashSet<>(mpas);
     }
 
+    @Component
     private static class MpaRowMapper implements RowMapper<Mpa> {
         @Override
         public Mpa mapRow(ResultSet rs, int rowNum) throws SQLException {

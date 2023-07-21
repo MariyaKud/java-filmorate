@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class JdbcUserStorageTest {
 
     @Autowired
-    private Storage<User> userRepository;
+    private StorageUser userRepository;
 
     private static final User correctUser = new User(0, "login", "User", "User@mail.ru",
                                                       LocalDate.of(2003, Month.APRIL, 22));
@@ -141,9 +141,10 @@ class JdbcUserStorageTest {
     }
 
     @Test
-    @DisplayName("Вернет пользователя с id = 2 (он добавлен в друзья пользователю с id=1)")
-    public void testGetPopular() {
-        final List<User> users = userRepository.getPopular(1);
+    @DisplayName("Должны получить одного друга")
+    void testGetFriends() {
+        final List<User> users = userRepository.getFriends(1L);
+
         assertEquals(1, users.size());
 
         final User user2 = users.get(0);
@@ -153,5 +154,37 @@ class JdbcUserStorageTest {
         assertEquals("Popular", user2.getLogin());
         assertEquals("Nick Popular", user2.getName());
         assertEquals(LocalDate.of(2000, 1, 1), user2.getBirthday());
+    }
+
+    @Test
+    @DisplayName("Должны получить пустой список друзей")
+    void testGetFriendsForUserWithoutFriends() {
+        final List<User> users = userRepository.getFriends(2L);
+
+        assertEquals(0, users.size());
+    }
+
+    @Test
+    @DisplayName("Должны получить общего друга")
+    void testGetCommonFriends() {
+        final List<User> users = userRepository.getCommonFriends(1L,3L);
+
+        assertEquals(1, users.size());
+
+        final User user2 = users.get(0);
+
+        assertEquals(2, user2.getId());
+        assertEquals("popular@mail.ru", user2.getEmail());
+        assertEquals("Popular", user2.getLogin());
+        assertEquals("Nick Popular", user2.getName());
+        assertEquals(LocalDate.of(2000, 1, 1), user2.getBirthday());
+    }
+
+    @Test
+    @DisplayName("Общих друзей нет, должны получить пустой список")
+    void testGetCommonFriendsEmpty() {
+        final List<User> users = userRepository.getCommonFriends(1L,2L);
+
+        assertEquals(0, users.size());
     }
 }

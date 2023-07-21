@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +17,6 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
@@ -37,7 +35,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public User findUserById(@PathVariable Long id) {
-        if (id < 0) {
+        if (id <= 0) {
             throw new IncorrectParameterException("id");
         }
 
@@ -51,7 +49,7 @@ public class UserController {
      */
     @GetMapping("/{id}/friends")
     public List<User> getAllFriendsForUserById(@PathVariable Long id) {
-        if (id < 0) {
+        if (id <= 0) {
             throw new IncorrectParameterException("id");
         }
 
@@ -66,7 +64,7 @@ public class UserController {
      */
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> findCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
-        if (id < 0) {
+        if (id <= 0) {
             throw new IncorrectParameterException("id");
         }
 

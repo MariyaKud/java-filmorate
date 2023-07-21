@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 class JdbcFilmsStorageTest {
 
     @Autowired
-    private Storage<Film> filmsRepository;
+    private StorageFilm filmsRepository;
 
     private static final Film correctFilm = new Film(1, "Стражи галактики 3", "Про енота",
                              LocalDate.of(2023, Month.APRIL, 22), 149, new Mpa(1,"G"));

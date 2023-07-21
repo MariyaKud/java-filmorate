@@ -41,14 +41,24 @@ public class JdbcLikesStorage implements StorageProperties {
 
     @Override
     public int size(Long id) {
-        return getAll(id).size();
+        final String sqlQuery = "select count(USER_ID) as RESULT " +
+                                "from LIKES " +
+                                "where FILM_ID = :id ";
+
+        final List<Integer> row = jdbcOperations.query(sqlQuery, java.util.Map.of("id", id),
+                                                     (rs, rowNum) -> rs.getInt("RESULT"));
+        if (row.size() > 0) {
+            return row.get(0);
+        } else {
+            return 0;
+        }
     }
 
     @Override
     public Set<Long> getAll(Long id) {
         final String sqlQuery = "select USER_ID " +
-                "from LIKES " +
-                "where FILM_ID = :id ";
+                                "from LIKES " +
+                                "where FILM_ID = :id ";
 
         final List<Long> ids = jdbcOperations.query(sqlQuery,
                 java.util.Map.of("id", id), (rs, rowNum) -> rs.getLong("USER_ID"));
