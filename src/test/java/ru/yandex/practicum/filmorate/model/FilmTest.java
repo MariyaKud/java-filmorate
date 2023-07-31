@@ -27,7 +27,7 @@ class FilmTest {
 
     //Пример корректно заполненного фильма
     private static final Film correctFilm = new Film(1, "Стражи галактики 3", "фантастика, боевик",
-            LocalDate.of(2023, Month.APRIL, 22), 149);
+            LocalDate.of(2023, Month.APRIL, 22), 149, new Mpa(1,"G"));
 
     @DisplayName("Должны получить пакет ошибок при создании сущности Film c null полями")
     @Test
